@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pojo {
+public class Pojo implements  PojoInterface{
     private String stringField;
     private char primitiveCharField;
     private int primitiveIntField;

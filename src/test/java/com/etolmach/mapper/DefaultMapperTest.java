@@ -1,11 +1,15 @@
 package com.etolmach.mapper;
 
+import com.etolmach.mapper.converter.CachedConverterByTypeProvider;
+import com.etolmach.mapper.converter.ConverterByNameProvider;
+import com.etolmach.mapper.converter.ConverterByTypeProvider;
 import com.etolmach.mapper.exceptions.CannotInjectValueException;
-import com.etolmach.mapper.exceptions.CannotInstantiateDestinationObject;
+import com.etolmach.mapper.exceptions.CannotInstantiateDestinationObjectException;
 import com.etolmach.mapper.exceptions.CannotRetrieveSourceValueException;
 import com.etolmach.mapper.exceptions.MapperException;
 import com.etolmach.mapper.objects.Pojo;
 import com.etolmach.mapper.objects.Pojo2;
+import com.etolmach.mapper.objects.PojoInterface;
 import com.etolmach.mapper.objects.dto.invalid.PrivateConstructorDto;
 import com.etolmach.mapper.objects.dto.valid.FieldToFieldMappingDto;
 import com.etolmach.mapper.objects.dto.valid.FieldToMethodMappingDto;
@@ -26,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 /**
@@ -42,7 +47,9 @@ public class DefaultMapperTest {
     private static final Double DOUBLE_2 = 9876543.21;
     private static final BigDecimal BIG_DECIMAL_2 = new BigDecimal("9876543210.123456789");
 
-    private final DefaultMapperBuilder builder = new DefaultMapperBuilder();
+    private ConverterByTypeProvider converterByTypeProvider = new CachedConverterByTypeProvider();
+    private ConverterByNameProvider converterByNameProvider = null;
+    private final DefaultMapperBuilder builder = new DefaultMapperBuilder(converterByTypeProvider, converterByNameProvider);
     private final Pojo pojo = new Pojo(STRING, PRIMITIVE_CHAR, PRIMITIVE_INT, DOUBLE, BIG_DECIMAL);
     private final Pojo2 pojo2 = new Pojo2(DOUBLE_2, BIG_DECIMAL_2);
 
@@ -101,7 +108,7 @@ public class DefaultMapperTest {
         assertEquals(pojo.getBigDecimalField(), dto.getTestBigDecimalField());
     }
 
-    @Test(expected = CannotInstantiateDestinationObject.class)
+    @Test(expected = CannotInstantiateDestinationObjectException.class)
     public void cannotInstantiateDestinationObject() throws MapperException {
         Mapper<Pojo, PrivateConstructorDto> mapper = builder.build(Pojo.class, PrivateConstructorDto.class);
 
@@ -124,56 +131,60 @@ public class DefaultMapperTest {
 
     @Test(expected = CannotRetrieveSourceValueException.class)
     public void cannotRetrieveSourceValueFromField() throws MapperException, NoSuchFieldException {
-        Map<Member, Member> map = new HashMap<>();
-        // The source field is inaccessible
-        Field srcField = Pojo.class.getDeclaredField("stringField");
-        Field destField = FieldToFieldMappingDto.class.getDeclaredField("testStringField");
-        map.put(destField, srcField);
-
-        Mapper<Pojo, FieldToMethodMappingDto> mapper = new DefaultMapper<>(Pojo.class, FieldToMethodMappingDto.class, map);
-
-        mapper.map(pojo);
+//        Map<Member, Member> map = new HashMap<>();
+//        // The source field is inaccessible
+//        Field srcField = Pojo.class.getDeclaredField("stringField");
+//        Field destField = FieldToFieldMappingDto.class.getDeclaredField("testStringField");
+//        map.put(destField, srcField);
+//
+//        Mapper<Pojo, FieldToMethodMappingDto> mapper = new DefaultMapper<>(Pojo.class, FieldToMethodMappingDto.class, map);
+//
+//        mapper.map(pojo);
+        assertFalse(true);
     }
 
     @Test(expected = CannotRetrieveSourceValueException.class)
     public void cannotRetrieveSourceValueFromMethod() throws MapperException, NoSuchFieldException, NoSuchMethodException {
-        Map<Member, Member> map = new HashMap<>();
-        // The source method is inaccessible
-        Method srcMethod = Pojo.class.getDeclaredMethod("privateMethod");
-        Field destField = FieldToFieldMappingDto.class.getDeclaredField("testStringField");
-        map.put(destField, srcMethod);
-
-        Mapper<Pojo, FieldToMethodMappingDto> mapper = new DefaultMapper<>(Pojo.class, FieldToMethodMappingDto.class, map);
-
-        mapper.map(pojo);
+//        Map<Member, Member> map = new HashMap<>();
+//        // The source method is inaccessible
+//        Method srcMethod = Pojo.class.getDeclaredMethod("privateMethod");
+//        Field destField = FieldToFieldMappingDto.class.getDeclaredField("testStringField");
+//        map.put(destField, srcMethod);
+//
+//        Mapper<Pojo, FieldToMethodMappingDto> mapper = new DefaultMapper<>(Pojo.class, FieldToMethodMappingDto.class, map);
+//
+//        mapper.map(pojo);
+        assertFalse(true);
     }
 
     @Test(expected = CannotInjectValueException.class)
     public void cannotInjectValueToField() throws MapperException, NoSuchFieldException, NoSuchMethodException {
-        Map<Member, Member> map = new HashMap<>();
-        // The source method is accessible
-        Method srcMethod = Pojo.class.getDeclaredMethod("getStringField");
-        // The target field is inaccessible
-        Field destField = MethodToFieldMappingDto.class.getDeclaredField("testStringField");
-        map.put(destField, srcMethod);
-
-        Mapper<Pojo, MethodToFieldMappingDto> mapper = new DefaultMapper<>(Pojo.class, MethodToFieldMappingDto.class, map);
-
-        mapper.map(pojo);
+//        Map<Member, Member> map = new HashMap<>();
+//        // The source method is accessible
+//        Method srcMethod = Pojo.class.getDeclaredMethod("getStringField");
+//        // The target field is inaccessible
+//        Field destField = MethodToFieldMappingDto.class.getDeclaredField("testStringField");
+//        map.put(destField, srcMethod);
+//
+//        Mapper<Pojo, MethodToFieldMappingDto> mapper = new DefaultMapper<>(Pojo.class, MethodToFieldMappingDto.class, map);
+//
+//        mapper.map(pojo);
+        assertFalse(true);
     }
 
     @Test(expected = CannotInjectValueException.class)
     public void cannotInjectValueToMethod() throws MapperException, NoSuchMethodException {
-        Map<Member, Member> map = new HashMap<>();
-        // The source method is accessible
-        Method srcMethod = Pojo.class.getDeclaredMethod("getStringField");
-        // The target field is inaccessible
-        Method destMethod = MethodToMethodMappingDto.class.getDeclaredMethod("privateMethod", String.class);
-        map.put(destMethod, srcMethod);
-
-        Mapper<Pojo, MethodToMethodMappingDto> mapper = new DefaultMapper<>(Pojo.class, MethodToMethodMappingDto.class, map);
-
-        mapper.map(pojo);
+//        Map<Member, Member> map = new HashMap<>();
+//        // The source method is accessible
+//        Method srcMethod = Pojo.class.getDeclaredMethod("getStringField");
+//        // The target field is inaccessible
+//        Method destMethod = MethodToMethodMappingDto.class.getDeclaredMethod("privateMethod", String.class);
+//        map.put(destMethod, srcMethod);
+//
+//        Mapper<Pojo, MethodToMethodMappingDto> mapper = new DefaultMapper<>(Pojo.class, MethodToMethodMappingDto.class, map);
+//
+//        mapper.map(pojo);
+        assertFalse(true);
     }
 
     @Test
@@ -190,6 +201,17 @@ public class DefaultMapperTest {
     @Test
     public void explicitSourceMethodMappingOnFieldDto() throws MapperException {
         Mapper<Pojo, ExplicitMethodToFieldMappingDto> mapper = this.builder.build(Pojo.class, ExplicitMethodToFieldMappingDto.class);
+
+        ExplicitMethodToFieldMappingDto dto = mapper.map(pojo);
+
+        assertEquals(pojo.getStringField(), dto.getTestStringField());
+        assertEquals(pojo.getPrimitiveCharField(), dto.getTestPrimitiveCharField());
+        assertNotEquals(pojo.getPrimitiveIntField(), dto.getTestPrimitiveIntField());
+    }
+
+    @Test
+    public void explicitSourceInterfaceMethodMappingOnFieldDto() throws MapperException {
+        Mapper<PojoInterface, ExplicitMethodToFieldMappingDto> mapper = this.builder.build(PojoInterface.class, ExplicitMethodToFieldMappingDto.class);
 
         ExplicitMethodToFieldMappingDto dto = mapper.map(pojo);
 

@@ -2,14 +2,17 @@ package com.etolmach.mapper;
 
 import com.etolmach.mapper.annotations.FieldMapping;
 import com.etolmach.mapper.annotations.MethodMapping;
-import com.etolmach.mapper.exceptions.IncompatibleTypesException;
-import com.etolmach.mapper.exceptions.InvalidSourceMemberException;
-import com.etolmach.mapper.exceptions.MapperConfigurationException;
-import com.etolmach.mapper.exceptions.MultipleMappingAnnotationsException;
+import com.etolmach.mapper.converter.CachedConverterByTypeProvider;
+import com.etolmach.mapper.converter.ConverterByNameProvider;
+import com.etolmach.mapper.converter.ConverterByTypeProvider;
+import com.etolmach.mapper.exceptions.*;
 import lombok.Data;
+import org.apache.commons.jxpath.util.TypeConverter;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,17 +21,32 @@ import java.util.Map;
 @Data
 public class DefaultMapperBuilder implements MapperBuilder {
 
+    private final ConverterByTypeProvider converterByTypeProvider;
+    private final ConverterByNameProvider converterByNameProvider;
+
+    public DefaultMapperBuilder() {
+        this(new CachedConverterByTypeProvider(), null);
+    }
+
+    public DefaultMapperBuilder(ConverterByTypeProvider converterByTypeProvider, ConverterByNameProvider converterByNameProvider) {
+        this.converterByTypeProvider = converterByTypeProvider;
+        this.converterByNameProvider = converterByNameProvider;
+    }
+
+    @Override
     public <S, D> Mapper<S, D> build(S srcObject, D destObject) throws MapperConfigurationException {
         return build((Class<S>) srcObject.getClass(), (Class<D>) destObject.getClass());
     }
 
+    @Override
     public <S, D> Mapper<S, D> build(Class<S> srcClass, Class<D> destClass) throws MapperConfigurationException {
-        Map<Member, Member> map = new HashMap<>();
-        lookForAnnotatedMembers(srcClass, destClass, destClass.getDeclaredFields(), map);
-        lookForAnnotatedMembers(srcClass, destClass, destClass.getDeclaredMethods(), map);
-        return new DefaultMapper<>(srcClass, destClass, map);
+        List<MappingDetails> mappingDetailsList = new ArrayList<>();
+        lookForAnnotatedMembers(srcClass, destClass, destClass.getDeclaredFields(), mappingDetailsList);
+        lookForAnnotatedMembers(srcClass, destClass, destClass.getDeclaredMethods(), mappingDetailsList);
+        return new DefaultMapper<>(srcClass, destClass, mappingDetailsList, converterByTypeProvider, converterByNameProvider);
     }
 
+    @Override
     public <D> Map<Class<?>, Mapper<?, D>> buildAll(Class<D> destClass, Class<?>... srcClasses) throws MapperConfigurationException {
         Map<Class<?>, Mapper<?, D>> mappers = new HashMap<>();
         for (Class<?> srcClass : srcClasses) {
@@ -37,62 +55,88 @@ public class DefaultMapperBuilder implements MapperBuilder {
         return mappers;
     }
 
-    private <S, D> void lookForAnnotatedMembers(Class<S> srcClass, Class<D> destClass, Member[] destMembers, Map<Member, Member> map) throws MultipleMappingAnnotationsException, InvalidSourceMemberException, IncompatibleTypesException {
+    private <S, D> void lookForAnnotatedMembers(Class<S> srcClass, Class<D> destClass, Member[] destMembers, List<MappingDetails> mappingDetailsList) throws MultipleMappingAnnotationsException, InvalidSourceMemberException, IncompatibleTypesException, CannotProvideConverterException, MultipleConvertersDefinedException {
         for (Member destMember : destMembers) {
-            Member srcMember = retrieveSourceMember(srcClass, destClass, destMember);
-            if (srcMember != null) {
-                // If the destination member is pointing to a valid source member then add it to the map
-                validateCompatibility(srcClass, srcMember, destClass, destMember);
-                // Allow using private members
-                ((AccessibleObject) srcMember).setAccessible(true);
-                ((AccessibleObject) destMember).setAccessible(true);
-                // Put the members into map
-                map.put(destMember, srcMember);
+            MappingDetails mappingDetails = retrieveMappingDetails(srcClass, destClass, destMember);
+            if (mappingDetails != null) {
+                ((AccessibleObject) mappingDetails.getSrcMember()).setAccessible(true);
+                ((AccessibleObject) mappingDetails.getDestMember()).setAccessible(true);
+                mappingDetailsList.add(mappingDetails);
             }
         }
     }
 
-    private <S, D> Member retrieveSourceMember(Class<S> srcClass, Class<D> destClass, Member destMember) throws MultipleMappingAnnotationsException, InvalidSourceMemberException {
+    private <S, D> MappingDetails retrieveMappingDetails(Class<S> srcClass, Class<D> destClass, Member destMember) throws MultipleMappingAnnotationsException, InvalidSourceMemberException, CannotProvideConverterException, MultipleConvertersDefinedException, IncompatibleTypesException {
+        MappingDetails mappingDetails = null;
         MethodMapping methodMapping = ((AnnotatedElement) destMember).getAnnotation(MethodMapping.class);
         FieldMapping fieldMapping = ((AnnotatedElement) destMember).getAnnotation(FieldMapping.class);
         // Check if the name is annotated with @MethodMapping and @FieldMapping
         if (methodMapping != null && fieldMapping != null) {
             throw new MultipleMappingAnnotationsException(destClass, destMember);
+        } else if (methodMapping != null) {
+            mappingDetails = getMethodMappingDetails(srcClass, destClass, destMember, methodMapping);
+        } else if (fieldMapping != null) {
+            mappingDetails = getFieldMappingDetails(srcClass, destClass, destMember, fieldMapping);
         }
-        // Retrieve the source member
-        return getSourceMember(srcClass, destClass, destMember, methodMapping, fieldMapping);
+        return mappingDetails;
     }
 
-    private <S, D> Member getSourceMember(Class<S> srcClass, Class<D> destClass, Member destMember, MethodMapping methodMapping, FieldMapping fieldMapping) throws InvalidSourceMemberException {
-        Member srcMember = null;
-        try {
-            if (methodMapping != null && methodMapping.source().isAssignableFrom(srcClass)) {
-                srcMember = retrieveSourceMember(srcClass, methodMapping);
-            } else if (fieldMapping != null && fieldMapping.source().isAssignableFrom(srcClass)) {
-                srcMember = retrieveSourceMember(srcClass, fieldMapping);
+    private <S, D> MappingDetails getFieldMappingDetails(Class<S> srcClass, Class<D> destClass, Member destMember, FieldMapping fieldMapping) throws InvalidSourceMemberException, CannotProvideConverterException, MultipleConvertersDefinedException, IncompatibleTypesException {
+        Class<?> explicitSrcClass = fieldMapping.source();
+        if (explicitSrcClass.isAssignableFrom(srcClass)) {
+            TypeConverter converter = retrieveConverter(fieldMapping.converter(), fieldMapping.converterName(), destClass, destMember);
+            try {
+                Member srcMember = srcClass.getDeclaredField(fieldMapping.name());
+                Class<?> destMemberType = getDestinationType(destMember);
+                validateTypeCompatibility(srcClass, destClass, destMember, converter, srcMember, destMemberType);
+                return new DefaultMappingDetails(srcMember, destMember, destMemberType, converter);
+            } catch (NoSuchFieldException e) {
+                throw new InvalidSourceMemberException(srcClass, destClass, destMember);
             }
-        } catch (NoSuchMethodException | NoSuchFieldException e) {
+        } else {
             throw new InvalidSourceMemberException(srcClass, destClass, destMember);
         }
-        return srcMember;
     }
 
-    private <S, D> void validateCompatibility(Class<S> srcClass, Member srcMember, Class<D> destClass, Member destMember) throws IncompatibleTypesException {
-        Class<?> srcType = getSourceType(srcMember);
-        Class<?> destType = getDestinationType(destMember);
-        if (!srcType.equals(destType)) {
-            throw new IncompatibleTypesException(srcClass, srcMember, destClass, destMember);
+    private <S, D> MappingDetails getMethodMappingDetails(Class<S> srcClass, Class<D> destClass, Member destMember, MethodMapping methodMapping) throws InvalidSourceMemberException, CannotProvideConverterException, MultipleConvertersDefinedException, IncompatibleTypesException {
+        Class<?> explicitSrcClass = methodMapping.source();
+        if (explicitSrcClass.isAssignableFrom(srcClass)) {
+            TypeConverter converter = retrieveConverter(methodMapping.converter(), methodMapping.converterName(), destClass, destMember);
+            try {
+                Member srcMember = srcClass.getDeclaredMethod(methodMapping.name());
+                Class<?> destMemberType = getDestinationType(destMember);
+                validateTypeCompatibility(srcClass, destClass, destMember, converter, srcMember, destMemberType);
+                return new DefaultMappingDetails(srcMember, destMember, destMemberType, converter);
+            } catch (NoSuchMethodException e) {
+                throw new InvalidSourceMemberException(srcClass, destClass, destMember);
+            }
+        } else {
+            throw new InvalidSourceMemberException(srcClass, destClass, destMember);
         }
     }
 
-    private Method retrieveSourceMember(Class<?> clazz, MethodMapping method) throws NoSuchMethodException {
-        // Current version supports parameter-less source methods only
-        return clazz.getDeclaredMethod(method.name());
+    private <S, D> void validateTypeCompatibility(Class<S> srcClass, Class<D> destClass, Member destMember, TypeConverter converter, Member srcMember, Class<?> destMemberType) throws IncompatibleTypesException {
+        if (converter == null) {
+            // If the converter is not defined, then validate if destination member is pointing to a valid source member
+            Class<?> srcMemberType = getSourceType(srcMember);
+            if (!srcMemberType.equals(destMemberType)) {
+                throw new IncompatibleTypesException(srcClass, srcMember, destClass, destMember);
+            }
+        }
     }
 
-    private Field retrieveSourceMember(Class<?> clazz, FieldMapping field) throws NoSuchFieldException {
-        return clazz.getDeclaredField(field.name());
+    private <D> TypeConverter retrieveConverter(Class<? extends TypeConverter> converterClass, String converterName, Class<D> destClass, Member destMember) throws MultipleConvertersDefinedException, CannotProvideConverterException {
+        TypeConverter converter = null;
+        if (!converterClass.equals(TypeConverter.class) && !converterName.isEmpty()) {
+            throw new MultipleConvertersDefinedException(destClass, destMember);
+        } else if (!converterClass.equals(TypeConverter.class)) {
+            converter = converterByTypeProvider.provide(converterClass);
+        } else if (!converterName.isEmpty()) {
+            converter = converterByNameProvider.provide(converterName);
+        }
+        return converter;
     }
+
 
     private Class<?> getSourceType(Member member) {
         if (member instanceof Field) {

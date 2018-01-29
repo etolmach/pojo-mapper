@@ -9,4 +9,8 @@ public abstract class MapperConfigurationException extends MapperException {
         super(message, messageParameters);
     }
 
+    public MapperConfigurationException(Throwable cause, String message, Object... messageParameters) {
+        super(cause, message, messageParameters);
+    }
+
 }

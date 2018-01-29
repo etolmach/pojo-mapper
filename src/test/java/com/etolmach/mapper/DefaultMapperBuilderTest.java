@@ -1,5 +1,8 @@
 package com.etolmach.mapper;
 
+import com.etolmach.mapper.converter.CachedConverterByTypeProvider;
+import com.etolmach.mapper.converter.ConverterByNameProvider;
+import com.etolmach.mapper.converter.ConverterByTypeProvider;
 import com.etolmach.mapper.exceptions.IncompatibleTypesException;
 import com.etolmach.mapper.exceptions.InvalidSourceMemberException;
 import com.etolmach.mapper.exceptions.MapperConfigurationException;
@@ -18,7 +21,9 @@ import static org.mockito.Mockito.verify;
  */
 public class DefaultMapperBuilderTest {
 
-    private final DefaultMapperBuilder builder = new DefaultMapperBuilder();
+    private ConverterByTypeProvider converterByTypeProvider = new CachedConverterByTypeProvider();
+    private ConverterByNameProvider converterByNameProvider = null;
+    private final DefaultMapperBuilder builder = new DefaultMapperBuilder(converterByTypeProvider, converterByNameProvider);
 
     @Test
     public void buildByClasses() throws MapperConfigurationException {
