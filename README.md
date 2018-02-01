@@ -113,7 +113,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
      ```java
      @FieldMapping(name = "stringField", converter = BasicTypeConverter.class)
      private String testStringField;
-     @MethodMapping(name = "getBigDecimalField", converter = YourCustomTypeConverter.class)
+     @MethodMapping(name = "getDoubleField", converter = YourCustomDoubleToBigDecimalConverter.class)
      private BigDecimal testBigDecimalField;
      ```
 
