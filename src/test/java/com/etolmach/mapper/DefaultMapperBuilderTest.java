@@ -33,6 +33,16 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultMapperBuilderTest {
 
+    public static final String TEST_STRING_FIELD = "testStringField";
+    public static final String TEST_PRIMITIVE_CHAR_FIELD = "testPrimitiveCharField";
+    public static final String TEST_PRIMITIVE_INT_FIELD = "testPrimitiveIntField";
+    public static final String TEST_DOUBLE_FIELD = "testDoubleField";
+    public static final String TEST_BIG_DECIMAL_FIELD = "testBigDecimalField";
+
+    public static final String SET_TEST_STRING_FIELD = "setTestStringField";
+    public static final String SET_TEST_DOUBLE_FIELD = "setTestDoubleField";
+    public static final String SET_TEST_BIG_DECIMAL_FIELD = "setTestBigDecimalField";
+
     private DefaultMapperBuilder builder;
 
     @Mock
@@ -63,28 +73,28 @@ public class DefaultMapperBuilderTest {
                 Source.class, FieldToFieldMappingDto.class,
                 list(
                         details(
-                                field(Source.class, "stringField"),
-                                field(FieldToFieldMappingDto.class, "testStringField"),
+                                Source.STRING_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_STRING_FIELD),
                                 String.class
                         ),
                         details(
-                                field(Source.class, "primitiveCharField"),
-                                field(FieldToFieldMappingDto.class, "testPrimitiveCharField"),
+                                Source.PRIMITIVE_CHAR_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_PRIMITIVE_CHAR_FIELD),
                                 char.class
                         ),
                         details(
-                                field(Source.class, "primitiveIntField"),
-                                field(FieldToFieldMappingDto.class, "testPrimitiveIntField"),
+                                Source.PRIMITIVE_INT_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_PRIMITIVE_INT_FIELD),
                                 int.class
                         ),
                         details(
-                                field(Source.class, "doubleField"),
-                                field(FieldToFieldMappingDto.class, "testDoubleField"),
+                                Source.DOUBLE_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_DOUBLE_FIELD),
                                 Double.class
                         ),
                         details(
-                                field(Source.class, "bigDecimalField"),
-                                field(FieldToFieldMappingDto.class, "testBigDecimalField"),
+                                Source.BIG_DECIMAL_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_BIG_DECIMAL_FIELD),
                                 BigDecimal.class
                         )
                 )
@@ -97,28 +107,28 @@ public class DefaultMapperBuilderTest {
                 new Source(), new FieldToFieldMappingDto(),
                 list(
                         details(
-                                field(Source.class, "stringField"),
-                                field(FieldToFieldMappingDto.class, "testStringField"),
+                                Source.STRING_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_STRING_FIELD),
                                 String.class
                         ),
                         details(
-                                field(Source.class, "primitiveCharField"),
-                                field(FieldToFieldMappingDto.class, "testPrimitiveCharField"),
+                                Source.PRIMITIVE_CHAR_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_PRIMITIVE_CHAR_FIELD),
                                 char.class
                         ),
                         details(
-                                field(Source.class, "primitiveIntField"),
-                                field(FieldToFieldMappingDto.class, "testPrimitiveIntField"),
+                                Source.PRIMITIVE_INT_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_PRIMITIVE_INT_FIELD),
                                 int.class
                         ),
                         details(
-                                field(Source.class, "doubleField"),
-                                field(FieldToFieldMappingDto.class, "testDoubleField"),
+                                Source.DOUBLE_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_DOUBLE_FIELD),
                                 Double.class
                         ),
                         details(
-                                field(Source.class, "bigDecimalField"),
-                                field(FieldToFieldMappingDto.class, "testBigDecimalField"),
+                                Source.BIG_DECIMAL_FIELD,
+                                field(FieldToFieldMappingDto.class, TEST_BIG_DECIMAL_FIELD),
                                 BigDecimal.class
                         )
                 )
@@ -139,33 +149,33 @@ public class DefaultMapperBuilderTest {
                 list(
                         list(
                                 details(
-                                        field(Source.class, "stringField"),
-                                        field(MultipleSourcesMixedMappingDto.class, "testStringField"),
+                                        Source.STRING_FIELD,
+                                        field(MultipleSourcesMixedMappingDto.class, TEST_STRING_FIELD),
                                         String.class
                                 ),
                                 details(
-                                        method(Source.class, "getPrimitiveCharField"),
-                                        field(MultipleSourcesMixedMappingDto.class, "testPrimitiveCharField"),
+                                        Source.GET_PRIMITIVE_CHAR_METHOD,
+                                        field(MultipleSourcesMixedMappingDto.class, TEST_PRIMITIVE_CHAR_FIELD),
                                         char.class,
                                         converter
                                 ),
                                 details(
-                                        field(Source.class, "primitiveIntField"),
-                                        field(MultipleSourcesMixedMappingDto.class, "testPrimitiveIntField"),
+                                        Source.PRIMITIVE_INT_FIELD,
+                                        field(MultipleSourcesMixedMappingDto.class, TEST_PRIMITIVE_INT_FIELD),
                                         int.class
                                 )
                         ),
                         list(
                                 details(
-                                        field(Source2.class, "bigDecimalField"),
-                                        method(MultipleSourcesMixedMappingDto.class, "setTestBigDecimalField", BigDecimal.class),
-                                        BigDecimal.class,
-                                        converter2
+                                        Source2.GET_DOUBLE_METHOD,
+                                        method(MultipleSourcesMixedMappingDto.class, SET_TEST_DOUBLE_FIELD, Double.class),
+                                        Double.class
                                 ),
                                 details(
-                                        method(Source2.class, "getDoubleField"),
-                                        method(MultipleSourcesMixedMappingDto.class, "setTestDoubleField", Double.class),
-                                        Double.class
+                                        Source2.BIG_DECIMAL_FIELD,
+                                        method(MultipleSourcesMixedMappingDto.class, SET_TEST_BIG_DECIMAL_FIELD, BigDecimal.class),
+                                        BigDecimal.class,
+                                        converter2
                                 )
 
                         )
@@ -189,33 +199,33 @@ public class DefaultMapperBuilderTest {
                 list(
                         list(
                                 details(
-                                        field(Source.class, "stringField"),
-                                        field(MultipleSourcesMixedMappingDto.class, "testStringField"),
+                                        Source.STRING_FIELD,
+                                        field(MultipleSourcesMixedMappingDto.class, TEST_STRING_FIELD),
                                         String.class
                                 ),
                                 details(
-                                        method(Source.class, "getPrimitiveCharField"),
-                                        field(MultipleSourcesMixedMappingDto.class, "testPrimitiveCharField"),
+                                        Source.GET_PRIMITIVE_CHAR_METHOD,
+                                        field(MultipleSourcesMixedMappingDto.class, TEST_PRIMITIVE_CHAR_FIELD),
                                         char.class,
                                         converter
                                 ),
                                 details(
-                                        field(Source.class, "primitiveIntField"),
-                                        field(MultipleSourcesMixedMappingDto.class, "testPrimitiveIntField"),
+                                        Source.PRIMITIVE_INT_FIELD,
+                                        field(MultipleSourcesMixedMappingDto.class, TEST_PRIMITIVE_INT_FIELD),
                                         int.class
                                 )
                         ),
                         list(
                                 details(
-                                        field(Source2.class, "bigDecimalField"),
-                                        method(MultipleSourcesMixedMappingDto.class, "setTestBigDecimalField", BigDecimal.class),
-                                        BigDecimal.class,
-                                        converter2
+                                        Source2.GET_DOUBLE_METHOD,
+                                        method(MultipleSourcesMixedMappingDto.class, SET_TEST_DOUBLE_FIELD, Double.class),
+                                        Double.class
                                 ),
                                 details(
-                                        method(Source2.class, "getDoubleField"),
-                                        method(MultipleSourcesMixedMappingDto.class, "setTestDoubleField", Double.class),
-                                        Double.class
+                                        Source2.BIG_DECIMAL_FIELD,
+                                        method(MultipleSourcesMixedMappingDto.class, SET_TEST_BIG_DECIMAL_FIELD, BigDecimal.class),
+                                        BigDecimal.class,
+                                        converter2
                                 )
 
                         )
@@ -272,8 +282,8 @@ public class DefaultMapperBuilderTest {
                 NamedConverterOnFieldMappingDto.class,
                 list(
                         details(
-                                Source.class.getDeclaredField("stringField"),
-                                NamedConverterOnFieldMappingDto.class.getDeclaredMethod("setTestFoo", String.class),
+                                Source.STRING_FIELD,
+                                NamedConverterOnFieldMappingDto.class.getDeclaredMethod(SET_TEST_STRING_FIELD, String.class),
                                 String.class,
                                 converter
                         )
@@ -328,26 +338,6 @@ public class DefaultMapperBuilderTest {
         when(converterByTypeProvider.provide(any())).thenThrow(CannotProvideConverterException.class);
 
         builder.build(Source.class, TypedConverterOnMethodMappingDto.class);
-    }
-
-    @Test
-    public void unsupportedSourceMemberTypeConverterByTypeFromOnMethodMapping() throws MapperConfigurationException, NoSuchMethodException {
-        when(converterByTypeProvider.provide(any())).thenThrow(CannotProvideConverterException.class);
-
-        // TODO : expected RuntimeException
-
-        testBuild(
-                Source.class,
-                NamedConverterOnFieldMappingDto.class,
-                list(
-                        details(
-                                Source.class.getConstructor(),
-                                NamedConverterOnFieldMappingDto.class.getDeclaredMethod("setTestFoo", String.class),
-                                String.class,
-                                converter
-                        )
-                )
-        );
     }
 
     // Utility methods

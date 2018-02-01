@@ -109,5 +109,5 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
     Map<Class<?>, Mapper<?, DestinationPojo>> mappers = builder.buildAll(DestinationPojo.pojo, SourcePojo.class, FooInterface.class);  
     ```
 **Project info** 
-* Last version : 1.2
-* Code coverage : 98% 
+* Last version : 1.3
+* Code coverage : 97% 

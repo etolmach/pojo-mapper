@@ -11,10 +11,10 @@ public class NamedConverterOnFieldMappingDto {
 
     public static final String CONVERTER_NAME = "testConverterName";
 
-    String testFoo = "testFoo";
+    private String testStringField = "testStringField";
 
     @FieldMapping(name = "stringField", converterName = CONVERTER_NAME)
-    public void setTestFoo(String testFoo) {
-        this.testFoo = testFoo;
+    public void setTestStringField(String stringField) {
+        this.testStringField = stringField;
     }
 }

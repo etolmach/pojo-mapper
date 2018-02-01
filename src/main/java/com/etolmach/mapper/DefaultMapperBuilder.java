@@ -6,6 +6,7 @@ import com.etolmach.mapper.converter.CachedConverterByTypeProvider;
 import com.etolmach.mapper.converter.ConverterByNameProvider;
 import com.etolmach.mapper.converter.ConverterByTypeProvider;
 import com.etolmach.mapper.exceptions.*;
+import lombok.Data;
 import org.apache.commons.jxpath.util.TypeConverter;
 
 import java.lang.reflect.*;
@@ -17,6 +18,7 @@ import java.util.Map;
 /**
  * @author etolmach
  */
+@Data
 public class DefaultMapperBuilder implements MapperBuilder {
 
     protected final ConverterByTypeProvider converterByTypeProvider;

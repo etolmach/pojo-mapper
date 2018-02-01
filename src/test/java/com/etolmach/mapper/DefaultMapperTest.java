@@ -56,22 +56,22 @@ public class DefaultMapperTest {
                         details(
                                 Source.PRIMITIVE_CHAR_FIELD,
                                 Destination.PRIMITIVE_CHAR_FIELD,
-                                String.class
+                                char.class
                         ),
                         details(
                                 Source.PRIMITIVE_INT_FIELD,
                                 Destination.PRIMITIVE_INT_FIELD,
-                                String.class
+                                int.class
                         ),
                         details(
                                 Source.DOUBLE_FIELD,
                                 Destination.DOUBLE_FIELD,
-                                String.class
+                                Double.class
                         ),
                         details(
                                 Source.BIG_DECIMAL_FIELD,
                                 Destination.BIG_DECIMAL_FIELD,
-                                String.class
+                                BigDecimal.class
                         )
                 )
         );
@@ -90,22 +90,22 @@ public class DefaultMapperTest {
                         details(
                                 Source.GET_PRIMITIVE_CHAR_METHOD,
                                 Destination.PRIMITIVE_CHAR_FIELD,
-                                String.class
+                                char.class
                         ),
                         details(
                                 Source.GET_PRIMITIVE_INT_METHOD,
                                 Destination.PRIMITIVE_INT_FIELD,
-                                String.class
+                                int.class
                         ),
                         details(
                                 Source.GET_DOUBLE_METHOD,
                                 Destination.DOUBLE_FIELD,
-                                String.class
+                                Double.class
                         ),
                         details(
                                 Source.GET_BIG_DECIMAL_METHOD,
                                 Destination.BIG_DECIMAL_FIELD,
-                                String.class
+                                BigDecimal.class
                         )
                 )
 
@@ -124,22 +124,22 @@ public class DefaultMapperTest {
                         details(
                                 Source.PRIMITIVE_CHAR_FIELD,
                                 Destination.SET_PRIMITIVE_CHAR_METHOD,
-                                String.class
+                                char.class
                         ),
                         details(
                                 Source.PRIMITIVE_INT_FIELD,
                                 Destination.SET_PRIMITIVE_INT_METHOD,
-                                String.class
+                                int.class
                         ),
                         details(
                                 Source.DOUBLE_FIELD,
                                 Destination.SET_DOUBLE_METHOD,
-                                String.class
+                                Double.class
                         ),
                         details(
                                 Source.BIG_DECIMAL_FIELD,
                                 Destination.SET_BIG_DECIMAL_METHOD,
-                                String.class
+                                BigDecimal.class
                         )
                 )
         );
@@ -157,22 +157,22 @@ public class DefaultMapperTest {
                         details(
                                 Source.GET_PRIMITIVE_CHAR_METHOD,
                                 Destination.SET_PRIMITIVE_CHAR_METHOD,
-                                String.class
+                                char.class
                         ),
                         details(
                                 Source.GET_PRIMITIVE_INT_METHOD,
                                 Destination.SET_PRIMITIVE_INT_METHOD,
-                                String.class
+                                int.class
                         ),
                         details(
                                 Source.GET_DOUBLE_METHOD,
                                 Destination.SET_DOUBLE_METHOD,
-                                String.class
+                                Double.class
                         ),
                         details(
                                 Source.GET_BIG_DECIMAL_METHOD,
                                 Destination.SET_BIG_DECIMAL_METHOD,
-                                String.class
+                                BigDecimal.class
                         )
                 )
         );
@@ -191,22 +191,22 @@ public class DefaultMapperTest {
                         details(
                                 Source.PRIMITIVE_CHAR_FIELD,
                                 Destination.SET_PRIMITIVE_CHAR_METHOD,
-                                String.class
+                                char.class
                         ),
                         details(
                                 Source.PRIMITIVE_INT_FIELD,
                                 Destination.SET_PRIMITIVE_INT_METHOD,
-                                String.class
+                                int.class
                         ),
                         details(
                                 Source.DOUBLE_FIELD,
                                 Destination.SET_DOUBLE_METHOD,
-                                String.class
+                                Double.class
                         ),
                         details(
                                 Source.BIG_DECIMAL_FIELD,
                                 Destination.SET_BIG_DECIMAL_METHOD,
-                                String.class
+                                BigDecimal.class
                         )
                 )
         );
@@ -232,7 +232,7 @@ public class DefaultMapperTest {
     }
 
     @Test(expected = CannotRetrieveSourceValueException.class)
-    public void cannotRetrieveSourceValueFromMethod() throws MapperException, NoSuchFieldException, NoSuchMethodException {
+    public void cannotRetrieveSourceValueFromMethod() throws MapperException {
         mapper(
                 Source.class, Destination.class,
                 list(
@@ -260,7 +260,7 @@ public class DefaultMapperTest {
     }
 
     @Test(expected = CannotInjectValueException.class)
-    public void cannotInjectValueToMethod() throws MapperException, NoSuchMethodException {
+    public void cannotInjectValueToMethod() throws MapperException {
         mapper(
                 Source.class, Destination.class,
                 list(
@@ -286,12 +286,12 @@ public class DefaultMapperTest {
                         details(
                                 Source.PRIMITIVE_CHAR_FIELD,
                                 Destination.SET_PRIMITIVE_CHAR_METHOD,
-                                String.class
+                                char.class
                         ),
                         details(
                                 Source.PRIMITIVE_INT_FIELD,
                                 Destination.SET_PRIMITIVE_INT_METHOD,
-                                String.class
+                                int.class
                         )
                 )
         );
@@ -301,12 +301,12 @@ public class DefaultMapperTest {
                         details(
                                 Source2.DOUBLE_FIELD,
                                 Destination.SET_DOUBLE_METHOD,
-                                String.class
+                                Double.class
                         ),
                         details(
                                 Source2.GET_BIG_DECIMAL_METHOD,
                                 Destination.BIG_DECIMAL_FIELD,
-                                String.class
+                                BigDecimal.class
                         )
                 )
         );
@@ -417,6 +417,7 @@ public class DefaultMapperTest {
                 )
         );
     }
+
 
     // Utility methods
     private <S, D> DefaultMapper<S, D> mapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
