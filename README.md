@@ -72,7 +72,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
     MapperBuilder builder = new DefaultMapperBuilder();
     Mapper<SourcePojo, DestinationPojo> mapper = builder.build(SourcePojo.class, DestinationPojo.pojo);
     ```
-6. Map source object to target object
+6. Map source object to destination object
     * Map to existing object:
         ```java
         mapper.map(sourcePojo, targetPojo);

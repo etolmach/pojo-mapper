@@ -1,8 +1,8 @@
 package com.etolmach.mapper.objects.dto.valid.explicit;
 
 import com.etolmach.mapper.annotations.FieldMapping;
-import com.etolmach.mapper.objects.Pojo;
-import com.etolmach.mapper.objects.Pojo2;
+import com.etolmach.mapper.objects.Destination;
+import com.etolmach.mapper.objects.Source;
 import lombok.Data;
 
 /**
@@ -14,9 +14,9 @@ public class ExplicitFieldToFieldMappingDto {
     @FieldMapping(name = "stringField")
     private String testStringField;
     // Explicit source class
-    @FieldMapping(name = "primitiveCharField", source = Pojo.class)
+    @FieldMapping(name = "primitiveCharField", source = Source.class)
     private char testPrimitiveCharField;
     // Non-matching source class
-    @FieldMapping(name = "primitiveIntField", source = Pojo2.class)
+    @FieldMapping(name = "primitiveIntField", source = Destination.class)
     private int testPrimitiveIntField;
 }

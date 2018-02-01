@@ -1,8 +1,7 @@
 package com.etolmach.mapper.objects.dto.valid.explicit;
 
 import com.etolmach.mapper.annotations.MethodMapping;
-import com.etolmach.mapper.objects.Pojo;
-import com.etolmach.mapper.objects.Pojo2;
+import com.etolmach.mapper.objects.Destination;
 import com.etolmach.mapper.objects.PojoInterface;
 import lombok.Data;
 
@@ -18,6 +17,6 @@ public class ExplicitMethodToFieldMappingDto {
     @MethodMapping(name = "getPrimitiveCharField", source = PojoInterface.class)
     private char testPrimitiveCharField;
     // Non-matching source class
-    @MethodMapping(name = "getPrimitiveIntField", source = Pojo2.class)
+    @MethodMapping(name = "getPrimitiveIntField", source = Destination.class)
     private int testPrimitiveIntField;
 }

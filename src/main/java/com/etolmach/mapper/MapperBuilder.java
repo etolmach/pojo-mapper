@@ -2,6 +2,7 @@ package com.etolmach.mapper;
 
 import com.etolmach.mapper.exceptions.MapperConfigurationException;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,4 +16,5 @@ public interface MapperBuilder {
 
     <D> Map<Class<?>, Mapper<?, D>> buildAll(Class<D> destClass, Class<?>... srcClasses) throws MapperConfigurationException;
 
+    <D> Map<Class<?>, Mapper<?, D>> buildAll(Class<D> destClass, List<Class<?>> srcClasses) throws MapperConfigurationException;
 }

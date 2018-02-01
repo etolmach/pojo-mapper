@@ -7,7 +7,7 @@ import java.lang.reflect.Member;
 /**
  * @author etolmach
  */
-public interface MappingDetails {
+public interface MappingDetails<S, D> {
 
     Member getSrcMember();
 

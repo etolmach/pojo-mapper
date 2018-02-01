@@ -1,6 +1,5 @@
 package com.etolmach.mapper.annotations;
 
-import org.apache.commons.jxpath.util.BasicTypeConverter;
 import org.apache.commons.jxpath.util.TypeConverter;
 
 import java.lang.annotation.ElementType;

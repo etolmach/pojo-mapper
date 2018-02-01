@@ -1,8 +1,8 @@
 package com.etolmach.mapper.objects.dto.valid.explicit;
 
 import com.etolmach.mapper.annotations.FieldMapping;
-import com.etolmach.mapper.objects.Pojo;
-import com.etolmach.mapper.objects.Pojo2;
+import com.etolmach.mapper.objects.Destination;
+import com.etolmach.mapper.objects.Source;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,15 +13,15 @@ import java.math.BigDecimal;
 @Data
 public class MultipleSourceFieldToFieldMappingDto {
     // Default source class
-    @FieldMapping(name = "stringField", source = Pojo.class)
+    @FieldMapping(name = "stringField", source = Source.class)
     private String testStringField;
     // Explicit source class
-    @FieldMapping(name = "primitiveCharField", source = Pojo.class)
+    @FieldMapping(name = "primitiveCharField", source = Source.class)
     private char testPrimitiveCharField;
-    @FieldMapping(name = "primitiveIntField", source = Pojo.class)
+    @FieldMapping(name = "primitiveIntField", source = Source.class)
     private int testPrimitiveIntField;
-    @FieldMapping(name = "doubleField", source = Pojo2.class)
+    @FieldMapping(name = "doubleField", source = Destination.class)
     private Double testDoubleField;
-    @FieldMapping(name = "bigDecimalField", source = Pojo2.class)
+    @FieldMapping(name = "bigDecimalField", source = Destination.class)
     private BigDecimal testBigDecimalField;
 }

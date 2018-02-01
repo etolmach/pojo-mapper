@@ -15,7 +15,7 @@ public class CachedConverterByTypeProvider implements ConverterByTypeProvider {
 
     private final Map<Class<? extends TypeConverter>, TypeConverter> cachedConverters;
 
-    private final ConverterBuilder builder;
+    protected final ConverterBuilder builder;
 
     public CachedConverterByTypeProvider() {
         this(new ReflectiveConverterBuilder());

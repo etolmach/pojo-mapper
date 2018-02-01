@@ -42,7 +42,7 @@ public class MethodToMethodMappingDto {
         this.testBigDecimalField = testBigDecimalField;
     }
 
-    private void privateMethod(String string){
+    private void privateMethod(String string) {
         this.testStringField = string;
     }
 }

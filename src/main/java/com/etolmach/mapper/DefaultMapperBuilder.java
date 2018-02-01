@@ -6,7 +6,6 @@ import com.etolmach.mapper.converter.CachedConverterByTypeProvider;
 import com.etolmach.mapper.converter.ConverterByNameProvider;
 import com.etolmach.mapper.converter.ConverterByTypeProvider;
 import com.etolmach.mapper.exceptions.*;
-import lombok.Data;
 import org.apache.commons.jxpath.util.TypeConverter;
 
 import java.lang.reflect.*;
@@ -18,11 +17,10 @@ import java.util.Map;
 /**
  * @author etolmach
  */
-@Data
 public class DefaultMapperBuilder implements MapperBuilder {
 
-    private final ConverterByTypeProvider converterByTypeProvider;
-    private final ConverterByNameProvider converterByNameProvider;
+    protected final ConverterByTypeProvider converterByTypeProvider;
+    protected final ConverterByNameProvider converterByNameProvider;
 
     public DefaultMapperBuilder() {
         this(new CachedConverterByTypeProvider(), null);
@@ -43,7 +41,7 @@ public class DefaultMapperBuilder implements MapperBuilder {
         List<MappingDetails> mappingDetailsList = new ArrayList<>();
         lookForAnnotatedMembers(srcClass, destClass, destClass.getDeclaredFields(), mappingDetailsList);
         lookForAnnotatedMembers(srcClass, destClass, destClass.getDeclaredMethods(), mappingDetailsList);
-        return new DefaultMapper<>(srcClass, destClass, mappingDetailsList, converterByTypeProvider, converterByNameProvider);
+        return buildFor(srcClass, destClass, mappingDetailsList);
     }
 
     @Override
@@ -53,6 +51,15 @@ public class DefaultMapperBuilder implements MapperBuilder {
             mappers.put(srcClass, build(srcClass, destClass));
         }
         return mappers;
+    }
+
+    @Override
+    public <D> Map<Class<?>, Mapper<?, D>> buildAll(Class<D> destClass, List<Class<?>> srcClasses) throws MapperConfigurationException {
+        return buildAll(destClass, srcClasses.toArray(new Class<?>[srcClasses.size()]));
+    }
+
+    protected <S, D> Mapper<S, D> buildFor(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
+        return new DefaultMapper<>(srcClass, destClass, mappingDetailsList);
     }
 
     private <S, D> void lookForAnnotatedMembers(Class<S> srcClass, Class<D> destClass, Member[] destMembers, List<MappingDetails> mappingDetailsList) throws MultipleMappingAnnotationsException, InvalidSourceMemberException, IncompatibleTypesException, CannotProvideConverterException, MultipleConvertersDefinedException {
@@ -93,9 +100,8 @@ public class DefaultMapperBuilder implements MapperBuilder {
             } catch (NoSuchFieldException e) {
                 throw new InvalidSourceMemberException(srcClass, destClass, destMember);
             }
-        } else {
-            throw new InvalidSourceMemberException(srcClass, destClass, destMember);
         }
+        return null;
     }
 
     private <S, D> MappingDetails getMethodMappingDetails(Class<S> srcClass, Class<D> destClass, Member destMember, MethodMapping methodMapping) throws InvalidSourceMemberException, CannotProvideConverterException, MultipleConvertersDefinedException, IncompatibleTypesException {
@@ -110,9 +116,8 @@ public class DefaultMapperBuilder implements MapperBuilder {
             } catch (NoSuchMethodException e) {
                 throw new InvalidSourceMemberException(srcClass, destClass, destMember);
             }
-        } else {
-            throw new InvalidSourceMemberException(srcClass, destClass, destMember);
         }
+        return null;
     }
 
     private <S, D> void validateTypeCompatibility(Class<S> srcClass, Class<D> destClass, Member destMember, TypeConverter converter, Member srcMember, Class<?> destMemberType) throws IncompatibleTypesException {
@@ -136,7 +141,6 @@ public class DefaultMapperBuilder implements MapperBuilder {
         }
         return converter;
     }
-
 
     private Class<?> getSourceType(Member member) {
         if (member instanceof Field) {

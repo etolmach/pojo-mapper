@@ -1,7 +1,6 @@
 package com.etolmach.mapper;
 
-import com.etolmach.mapper.converter.ConverterByNameProvider;
-import com.etolmach.mapper.converter.ConverterByTypeProvider;
+import com.etolmach.mapper.exceptions.CannotConvertObjectException;
 import com.etolmach.mapper.exceptions.CannotInjectValueException;
 import com.etolmach.mapper.exceptions.CannotInstantiateDestinationObjectException;
 import com.etolmach.mapper.exceptions.CannotRetrieveSourceValueException;
@@ -22,20 +21,15 @@ public class DefaultMapper<S, D> implements Mapper<S, D> {
 
     private final Class<S> srcClass;
     private final Class<D> destClass;
-    private final ConverterByTypeProvider converterByTypeProvider;
-    private final ConverterByNameProvider converterByNameProvider;
 
-    DefaultMapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList,
-                  ConverterByTypeProvider converterByTypeProvider, ConverterByNameProvider converterByNameProvider) {
+    DefaultMapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
         this.srcClass = srcClass;
         this.destClass = destClass;
         this.mappingDetailsList = mappingDetailsList;
-        this.converterByTypeProvider = converterByTypeProvider;
-        this.converterByNameProvider = converterByNameProvider;
     }
 
     @Override
-    public D map(S srcObject) throws CannotInjectValueException, CannotRetrieveSourceValueException, CannotInstantiateDestinationObjectException {
+    public D map(S srcObject) throws CannotInjectValueException, CannotRetrieveSourceValueException, CannotInstantiateDestinationObjectException, CannotConvertObjectException {
         try {
             D destObject = destClass.newInstance();
             return map(srcObject, destObject);
@@ -45,14 +39,14 @@ public class DefaultMapper<S, D> implements Mapper<S, D> {
     }
 
     @Override
-    public D map(S srcObject, D destObject) throws CannotRetrieveSourceValueException, CannotInjectValueException {
+    public D map(S srcObject, D destObject) throws CannotRetrieveSourceValueException, CannotInjectValueException, CannotConvertObjectException {
         for (MappingDetails details : mappingDetailsList) {
             // Retrieve the value from the source
             Object srcValue = retrieveValue(srcObject, details.getSrcMember());
             // Convert the value to the target type
             Object convertedValue = convertValue(srcValue, details.getDestMemberType(), details.getConverter());
             // Inject the value to the destination
-            injectValue(destObject, details.getSrcMember(), convertedValue);
+            injectValue(destObject, details.getDestMember(), convertedValue);
         }
         return destObject;
     }
@@ -72,12 +66,16 @@ public class DefaultMapper<S, D> implements Mapper<S, D> {
         return value;
     }
 
-    private Object convertValue(Object srcValue, Class<?> destMemberType, TypeConverter converter) {
+    private Object convertValue(Object srcValue, Class<?> destMemberType, TypeConverter converter) throws CannotConvertObjectException {
         if (converter == null) {
             // No type converter is defined. Return unchanged srcValue
             return srcValue;
         } else {
-            return converter.convert(srcValue, destMemberType);
+            if (converter.canConvert(srcValue, destMemberType)) {
+                return converter.convert(srcValue, destMemberType);
+            } else {
+                throw new CannotConvertObjectException(srcValue, destMemberType, converter);
+            }
         }
     }
 
