@@ -9,7 +9,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
     <dependency>
         <groupId>com.etolmach</groupId>
         <artifactId>pojo-mapper</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
     </dependency>
     ```
 
@@ -94,7 +94,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
     This will allow you to map different fields from different source objects:
     ```java
     // Build the mappers
-    MapperBuilder builder = new DefaultMapperBuilder();
+    MapperBuilder builder = new BaseMapperBuilder();
     Mapper<Source, Destination> sourceMapper = builder.build(Source.class, Destination.class);  
     Mapper<FooInterface, Destination> fooInterfaceMapper = builder.build(FooInterface.class, Destination.class);
     // Map the objects
