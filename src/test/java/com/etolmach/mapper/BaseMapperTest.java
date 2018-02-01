@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
  * @author etolmach
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultMapperTest {
+public class BaseMapperTest {
 
     private static final String STRING = "String field";
     private static final int PRIMITIVE_INT = 123456;
@@ -420,12 +420,12 @@ public class DefaultMapperTest {
 
 
     // Utility methods
-    private <S, D> DefaultMapper<S, D> mapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
-        return new DefaultMapper<>(srcClass, destClass, mappingDetailsList);
+    private <S, D> BaseMapper<S, D> mapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
+        return new BaseMapper<>(srcClass, destClass, mappingDetailsList);
     }
 
     private <S, D> void testMapper(S srcObject, Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) throws MapperException {
-        DefaultMapper<S, D> mapper = mapper(srcClass, destClass, mappingDetailsList);
+        BaseMapper<S, D> mapper = mapper(srcClass, destClass, mappingDetailsList);
 
         mapper.map(srcObject);
     }

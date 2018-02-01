@@ -41,12 +41,12 @@ public class MapperUtils {
         }
     }
 
-    public static <S, D> DefaultMappingDetails<S, D> details(Member srcMember, Member destMember, Class<?> destType) {
+    public static <S, D> BaseMappingDetails<S, D> details(Member srcMember, Member destMember, Class<?> destType) {
         return details(srcMember, destMember, destType, null);
     }
 
-    public static <S, D> DefaultMappingDetails<S, D> details(Member srcMember, Member destMember, Class<?> destType, TypeConverter converter) {
-        return new DefaultMappingDetails<>(srcMember, destMember, destType, converter);
+    public static <S, D> BaseMappingDetails<S, D> details(Member srcMember, Member destMember, Class<?> destType, TypeConverter converter) {
+        return new BaseMappingDetails<>(srcMember, destMember, destType, converter);
     }
 
     public static <E> List<E> list(E... elements) {

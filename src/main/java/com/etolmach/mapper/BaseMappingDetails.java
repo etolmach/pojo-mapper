@@ -11,7 +11,7 @@ import java.lang.reflect.Member;
  */
 @Data
 @AllArgsConstructor
-public class DefaultMappingDetails<S, D> implements MappingDetails<S, D> {
+public class BaseMappingDetails<S, D> implements MappingDetails<S, D> {
 
     private Member srcMember;
 

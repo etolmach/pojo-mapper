@@ -15,7 +15,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
 
 2. Define your source class
     ```java
-    public class SourcePojo {
+    public class Source {
         private String stringField;
         private char primitiveCharField;
         private int primitiveIntField;
@@ -30,7 +30,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
 3. Define your destination class
     ```java
     @Data
-    public class DestinationPojo {
+    public class Destination {
          private String testStringField;
          private char testPrimitiveCharField;
          private int testPrimitiveIntField;
@@ -69,17 +69,17 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
          ```
  5. Build a mapper
     ```java
-    MapperBuilder builder = new DefaultMapperBuilder();
-    Mapper<SourcePojo, DestinationPojo> mapper = builder.build(SourcePojo.class, DestinationPojo.pojo);
+    MapperBuilder builder = new BaseMapperBuilder();
+    Mapper<Source, Destination> mapper = builder.build(Source.class, Destination.class);
     ```
 6. Map source object to destination object
     * Map to existing object:
         ```java
-        mapper.map(sourcePojo, targetPojo);
+        mapper.map(source, destination);
         ```
     * Map to a new instance:
         ```java
-        TargetPojo targetPojo = mapper.map(sourcePojo);
+        Destination destination = mapper.map(source);
         ```
 
 **Advanced usage**
@@ -95,19 +95,28 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
     ```java
     // Build the mappers
     MapperBuilder builder = new DefaultMapperBuilder();
-    Mapper<SourcePojo, DestinationPojo> sourcePojoMapper = builder.build(SourcePojo.class, DestinationPojo.pojo);  
-    Mapper<FooInterface, DestinationPojo> fooInterfaceMapper = builder.build(FooInterface.class, DestinationPojo.pojo);
+    Mapper<Source, Destination> sourceMapper = builder.build(Source.class, Destination.class);  
+    Mapper<FooInterface, Destination> fooInterfaceMapper = builder.build(FooInterface.class, Destination.class);
     // Map the objects
-    DestinationPojo destinationPojo = new DestinationPojo();
-    sourcePojoMapper.map(sourcePojo, destinationPojo);
-    sourcePojoMapper.map(fooInterfaceInstance, destinationPojo);
+    Destination destination = new Destination();
+    sourceMapper.map(sourcePojo, destination);
+    fooInterfaceMapper.map(fooInterfaceInstance, destination);
     ```
 * Build multiple mappers with single command
     ```java
     // Build the mappers
-    MapperBuilder builder = new DefaultMapperBuilder();
-    Map<Class<?>, Mapper<?, DestinationPojo>> mappers = builder.buildAll(DestinationPojo.pojo, SourcePojo.class, FooInterface.class);  
+    MapperBuilder builder = new BaseMapperBuilder();
+    Map<Class<?>, Mapper<?, Destination>> mappers = builder.buildAll(Destination.pojo, Source.class, FooInterface.class);  
     ```
+
+* Specify a type converter class which extends org.apache.commons.jxpath.util.TypeConverter
+     ```java
+     @FieldMapping(name = "stringField", converter = BasicTypeConverter.class)
+     private String testStringField;
+     @MethodMapping(name = "getBigDecimalField", converter = YourCustomTypeConverter.class)
+     private BigDecimal testBigDecimalField;
+     ```
+
 **Project info** 
 * Last version : 1.3
 * Code coverage : 97% 

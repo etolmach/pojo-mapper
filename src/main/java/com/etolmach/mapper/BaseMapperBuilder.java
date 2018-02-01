@@ -19,16 +19,16 @@ import java.util.Map;
  * @author etolmach
  */
 @Data
-public class DefaultMapperBuilder implements MapperBuilder {
+public class BaseMapperBuilder implements MapperBuilder {
 
     protected final ConverterByTypeProvider converterByTypeProvider;
     protected final ConverterByNameProvider converterByNameProvider;
 
-    public DefaultMapperBuilder() {
+    public BaseMapperBuilder() {
         this(new CachedConverterByTypeProvider(), null);
     }
 
-    public DefaultMapperBuilder(ConverterByTypeProvider converterByTypeProvider, ConverterByNameProvider converterByNameProvider) {
+    public BaseMapperBuilder(ConverterByTypeProvider converterByTypeProvider, ConverterByNameProvider converterByNameProvider) {
         this.converterByTypeProvider = converterByTypeProvider;
         this.converterByNameProvider = converterByNameProvider;
     }
@@ -61,7 +61,7 @@ public class DefaultMapperBuilder implements MapperBuilder {
     }
 
     protected <S, D> Mapper<S, D> buildFor(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
-        return new DefaultMapper<>(srcClass, destClass, mappingDetailsList);
+        return new BaseMapper<>(srcClass, destClass, mappingDetailsList);
     }
 
     private <S, D> void lookForAnnotatedMembers(Class<S> srcClass, Class<D> destClass, Member[] destMembers, List<MappingDetails> mappingDetailsList) throws MultipleMappingAnnotationsException, InvalidSourceMemberException, IncompatibleTypesException, CannotProvideConverterException, MultipleConvertersDefinedException {
@@ -98,7 +98,7 @@ public class DefaultMapperBuilder implements MapperBuilder {
                 Member srcMember = srcClass.getDeclaredField(fieldMapping.name());
                 Class<?> destMemberType = getDestinationType(destMember);
                 validateTypeCompatibility(srcClass, destClass, destMember, converter, srcMember, destMemberType);
-                return new DefaultMappingDetails(srcMember, destMember, destMemberType, converter);
+                return new BaseMappingDetails(srcMember, destMember, destMemberType, converter);
             } catch (NoSuchFieldException e) {
                 throw new InvalidSourceMemberException(srcClass, destClass, destMember);
             }
@@ -114,7 +114,7 @@ public class DefaultMapperBuilder implements MapperBuilder {
                 Member srcMember = srcClass.getDeclaredMethod(methodMapping.name());
                 Class<?> destMemberType = getDestinationType(destMember);
                 validateTypeCompatibility(srcClass, destClass, destMember, converter, srcMember, destMemberType);
-                return new DefaultMappingDetails(srcMember, destMember, destMemberType, converter);
+                return new BaseMappingDetails(srcMember, destMember, destMemberType, converter);
             } catch (NoSuchMethodException e) {
                 throw new InvalidSourceMemberException(srcClass, destClass, destMember);
             }

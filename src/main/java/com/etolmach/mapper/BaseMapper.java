@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author etolmach
  */
-public class DefaultMapper<S, D> implements Mapper<S, D> {
+public class BaseMapper<S, D> implements Mapper<S, D> {
 
     // destMember -> srcMember
     private final List<MappingDetails> mappingDetailsList;
@@ -22,7 +22,7 @@ public class DefaultMapper<S, D> implements Mapper<S, D> {
     private final Class<S> srcClass;
     private final Class<D> destClass;
 
-    DefaultMapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
+    BaseMapper(Class<S> srcClass, Class<D> destClass, List<MappingDetails> mappingDetailsList) {
         this.srcClass = srcClass;
         this.destClass = destClass;
         this.mappingDetailsList = mappingDetailsList;

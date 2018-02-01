@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @author etolmach
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultMapperBuilderTest {
+public class BaseMapperBuilderTest {
 
     public static final String TEST_STRING_FIELD = "testStringField";
     public static final String TEST_PRIMITIVE_CHAR_FIELD = "testPrimitiveCharField";
@@ -43,7 +43,7 @@ public class DefaultMapperBuilderTest {
     public static final String SET_TEST_DOUBLE_FIELD = "setTestDoubleField";
     public static final String SET_TEST_BIG_DECIMAL_FIELD = "setTestBigDecimalField";
 
-    private DefaultMapperBuilder builder;
+    private BaseMapperBuilder builder;
 
     @Mock
     private ConverterByTypeProvider converterByTypeProvider;
@@ -56,12 +56,12 @@ public class DefaultMapperBuilderTest {
 
     @Before
     public void setUp() {
-        builder = spy(new DefaultMapperBuilder(converterByTypeProvider, converterByNameProvider));
+        builder = spy(new BaseMapperBuilder(converterByTypeProvider, converterByNameProvider));
     }
 
     @Test
     public void testDefaultConstructor() {
-        DefaultMapperBuilder builder = new DefaultMapperBuilder();
+        BaseMapperBuilder builder = new BaseMapperBuilder();
 
         assertTrue(builder.converterByTypeProvider instanceof CachedConverterByTypeProvider);
         assertNull(builder.converterByNameProvider);
@@ -350,12 +350,12 @@ public class DefaultMapperBuilderTest {
         testBuild(builder, srcClass, destClass, expectedMappingDetails);
     }
 
-    private void testBuild(DefaultMapperBuilder builder, Class<?> srcClass, Class<?> destClass, List<MappingDetails> expectedMappingDetails) throws MapperConfigurationException {
+    private void testBuild(BaseMapperBuilder builder, Class<?> srcClass, Class<?> destClass, List<MappingDetails> expectedMappingDetails) throws MapperConfigurationException {
         builder.build(srcClass, destClass);
         assertBuilderGeneratesValidData(builder, Arrays.asList(srcClass), destClass, Arrays.asList(expectedMappingDetails));
     }
 
-    private void assertBuilderGeneratesValidData(DefaultMapperBuilder builder, List<Class<?>> expectedSrcClasses, Class<?> expectedDestClass, List<List<MappingDetails>> expectedMappingDetailsList) {
+    private void assertBuilderGeneratesValidData(BaseMapperBuilder builder, List<Class<?>> expectedSrcClasses, Class<?> expectedDestClass, List<List<MappingDetails>> expectedMappingDetailsList) {
         // Create the captors
         ArgumentCaptor<Class<?>> srcClassCaptor = ArgumentCaptor.forClass(Class.class);
         ArgumentCaptor<Class<?>> destClassCaptor = ArgumentCaptor.forClass(Class.class);
