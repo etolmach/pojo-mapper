@@ -1,4 +1,7 @@
 # POJO-Mapper
+[![Master Branch Build Status](https://travis-ci.org/etolmach/pojo-mapper.svg?branch=master)](https://travis-ci.org/etolmach/pojo-mapper/builds) 
+[![codecov](https://codecov.io/gh/etolmach/pojo-mapper/branch/master/graph/badge.svg)](https://codecov.io/gh/etolmach/pojo-mapper)
+[![Requirements Status](https://requires.io/github/etolmach/pojo-mapper/requirements.svg?branch=master)](https://requires.io/github/etolmach/pojo-mapper/requirements/?branch=master)
 
 POJO-Mapper is an easy-to-use annotation based tool for mapping the data between the objects.
 
@@ -9,7 +12,7 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
     <dependency>
         <groupId>com.etolmach</groupId>
         <artifactId>pojo-mapper</artifactId>
-        <version>1.3</version>
+        <version>1.1</version>
     </dependency>
     ```
 
@@ -116,7 +119,3 @@ POJO-Mapper is an easy-to-use annotation based tool for mapping the data between
      @MethodMapping(name = "getDoubleField", converter = YourCustomDoubleToBigDecimalConverter.class)
      private BigDecimal testBigDecimalField;
      ```
-
-**Project info** 
-* Last version : 1.3
-* Code coverage : 97% 
