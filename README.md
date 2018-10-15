@@ -1,5 +1,5 @@
 # POJO-Mapper
-[![Master Branch Build Status](https://travis-ci.org/etolmach/pojo-mapper.svg?branch=master)](https://travis-ci.org/etolmach/pojo-mapper/builds) 
+[![Master Branch Build Status](https://travis-ci.com/etolmach/pojo-mapper.svg?branch=master)](https://travis-ci.com/etolmach/pojo-mapper/builds) 
 [![codecov](https://codecov.io/gh/etolmach/pojo-mapper/branch/master/graph/badge.svg)](https://codecov.io/gh/etolmach/pojo-mapper)
 [![Requirements Status](https://requires.io/github/etolmach/pojo-mapper/requirements.svg?branch=master)](https://requires.io/github/etolmach/pojo-mapper/requirements/?branch=master)
 
